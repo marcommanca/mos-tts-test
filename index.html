@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Test MOS - TTS Sardo</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; max-width: 600px; margin: auto; }
+    .hidden { display: none; }
+    .btn { padding: 0.5em 1em; margin-top: 1em; }
+    .question { margin-bottom: 1em; }
+    input[type=number] { width: 60px; }
+  </style>
+</head>
+<body>
+
+  <!-- Pagina iniziale -->
+  <div id="start-page">
+    <h2>Benvenuto nel test MOS</h2>
+    <p>Per iniziare, inserisci il tuo nome e cognome.</p>
+    <form id="start-form">
+      <label>Nome: <input type="text" id="nome" required></label><br><br>
+      <label>Cognome: <input type="text" id="cognome" required></label><br><br>
+      <button class="btn" type="submit">Inizia il test</button>
+    </form>
+  </div>
+
+  <!-- Pagina del test -->
+  <div id="test-page" class="hidden">
+    <p><strong>Audio <span id="audio-number">1</span>/10</strong></p>
+    <audio id="audio-player" controls></audio>
+
+    <form id="question-form">
+      <div class="question">
+        <label>1. Quanto è naturale la voce? (1-5)</label><br>
+        <input type="number" min="1" max="5" name="q1" required>
+      </div>
+      <div class="question">
+        <label>2. Quanto è comprensibile il contenuto? (1-5)</label><br>
+        <input type="number" min="1" max="5" name="q2" required>
+      </div>
+      <div class="question">
+        <label>3. Quanto ti sembra realistica la pronuncia? (1-5)</label><br>
+        <input type="number" min="1" max="5" name="q3" required>
+      </div>
+      <button class="btn" type="submit">Prossimo</button>
+    </form>
+  </div>
+
+  <!-- Pagina finale -->
+  <div id="end-page" class="hidden">
+    <h2>Grazie per aver completato il test!</h2>
+    <p>Le tue risposte sono state salvate.</p>
+  </div>
+
+  <script>
+    // CONFIG: URL dello script Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmmCFrFwH86l1pGsiKkaho4i-y6JDi8puNAhPDDhfS4WB27l3pY4se6dODMHNtDq_A/exec";
+
+    const audioFiles = [
+      'audio1.wav', 'audio2.wav', 'audio3.wav'];
+
+    let current = 0;
+    const responses = [];
+    let nome = "", cognome = "";
+
+    const startPage = document.getElementById('start-page');
+    const testPage = document.getElementById('test-page');
+    const endPage = document.getElementById('end-page');
+
+    const startForm = document.getElementById('start-form');
+    const questionForm = document.getElementById('question-form');
+    const audioPlayer = document.getElementById('audio-player');
+    const audioNumber = document.getElementById('audio-number');
+
+    startForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      nome = document.getElementById('nome').value.trim();
+      cognome = document.getElementById('cognome').value.trim();
+
+      if (nome && cognome) {
+        startPage.classList.add('hidden');
+        testPage.classList.remove('hidden');
+        loadAudio(current);
+      }
+    });
+
+    questionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(questionForm);
+      responses.push({
+        audio: audioFiles[current],
+        naturalezza: data.get('q1'),
+        comprensibilita: data.get('q2'),
+        pronuncia: data.get('q3')
+      });
+
+      current++;
+      if (current < audioFiles.length) {
+        loadAudio(current);
+      } else {
+        testPage.classList.add('hidden');
+        endPage.classList.remove('hidden');
+        inviaDati();
+      }
+    });
+
+    function loadAudio(index) {
+      audioNumber.textContent = index + 1;
+      audioPlayer.src = `audio/${audioFiles[index]}`;
+      questionForm.reset();
+    }
+
+    function inviaDati() {
+      const payload = {
+        nome: nome,
+        cognome: cognome,
+        responses: responses
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        console.log("Dati inviati con successo.");
+      }).catch(err => {
+        console.error("Errore nell'invio dei dati:", err);
+      });
+    }
+  </script>
+
+</body>
+</html>
