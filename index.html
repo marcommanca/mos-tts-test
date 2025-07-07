@@ -98,9 +98,11 @@
       const data = new FormData(questionForm);
       responses.push({
         audio: audioFiles[current],
-        naturalezza: data.get('q1'),
-        comprensibilita: data.get('q2'),
-        pronuncia: data.get('q3')
+        nativeness: data.get('q1'),
+        chiarezza: data.get('q2'),
+        acc_fonetica: data.get('q3'),
+	acc_fonosintattica: data.get('q4'),
+	ad_prosodica: data.get('q5)
       });
 
       current++;
