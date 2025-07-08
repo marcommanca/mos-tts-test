@@ -45,11 +45,11 @@
       </div>
       <div class="question">
         <label>4. Quanto l’intonazione, le pause e il ritmo rispettano la struttura sintattica della frase?<br>[1 (intonazione innaturale)-5 (struttura e ritmo perfetti)]</label><br>
-        <input type="number" min="1" max="5" name="q2" required>
+        <input type="number" min="1" max="5" name="q4" required>
       </div>
       <div class="question">
         <label>5. Quanto l’intonazione, l’accentazione e il ritmo sono adeguati al significato del messaggio?<br>[1 (inappropriata)-5 (coerente ed espressiva)]</label><br>
-        <input type="number" min="1" max="5" name="q2" required>
+        <input type="number" min="1" max="5" name="q5" required>
       </div>
       <button class="btn" type="submit">Prossimo</button>
     </form>
@@ -102,7 +102,7 @@
         chiarezza: data.get('q2'),
         acc_fonetica: data.get('q3'),
 	acc_fonosintattica: data.get('q4'),
-	ad_prosodica: data.get('q5)
+	ad_prosodica: data.get('q5')
       });
 
       current++;
