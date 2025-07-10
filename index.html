@@ -52,6 +52,16 @@
     <form id="start-form">
       <label>Nome: <input type="text" id="nome" required></label><br><br>
       <label>Cognome: <input type="text" id="cognome" required></label><br><br>
+<label>
+  Professione:
+  <select id="professione" required>
+    <option value="" disabled selected>Seleziona una opzione</option>
+    <option value="linguista">Linguista</option>
+    <option value="non linguista">Non linguista</option>
+  </select>
+</label>
+<br><br>
+
       <button class="btn" type="submit">Inizia il test</button>
     </form>
   </div>
@@ -98,14 +108,14 @@
 
   <script>
     // CONFIG: URL dello script Google Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXpPm05aGBhy2ocunJ5oNwxaVlo3zVkvc5UDo0eVjl0iCkteHgv08ee7xj2hB29eDq/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxbeDfLsonAVsPHvqoalNYBdJQlEhAOkuu4ivZ_11MpLArLqBq_9FGrI2H3Sqdi2Mm5/exec";
 
     const audioFiles = ["10_real.wav", "11_real.wav", "12_fake.wav", "13_fake.wav", "14_fake.wav", "15_fake.wav", "16_fake.wav", "17_fake.wav", "18_fake.wav", "19_real.wav", 
 	"1_fake.wav", "20_real.wav", "2_fake.wav", "3_fake.wav", "4_real.wav", "5_fake.wav", "6_real.wav", "7_fake.wav", "8_fake.wav", "9_real.wav"];
 
     let current = 0;
     const responses = [];
-    let nome = "", cognome = "";
+    let nome = "", cognome = "", let professione = "";
 
     const startPage = document.getElementById('start-page');
     const testPage = document.getElementById('test-page');
@@ -120,8 +130,9 @@
       e.preventDefault();
       nome = document.getElementById('nome').value.trim();
       cognome = document.getElementById('cognome').value.trim();
+	professione = document.getElementById('professione').value;
 
-      if (nome && cognome) {
+      if (nome && cognome && professione) {
         startPage.classList.add('hidden');
         testPage.classList.remove('hidden');
         loadAudio(current);
@@ -221,6 +232,7 @@ questionForm.addEventListener('submit', (e) => {
       const payload = {
         nome: nome,
         cognome: cognome,
+	professione: professione,
         responses: responses
       };
 
