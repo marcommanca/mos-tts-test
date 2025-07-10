@@ -30,8 +30,25 @@
 
   <!-- Pagina iniziale -->
   <div id="start-page">
-    <h2>Benvenuto nel test MOS</h2>
-    <p>Per iniziare, inserisci il tuo nome e cognome.</p>
+<h2>👋 Benvenuto nel test di valutazione vocale del sistema Text-to-Speech per la lingua Sarda</h2>
+<p>
+  Grazie di aver scelto di partecipare!
+</p>
+<p>
+  Il <strong>test che ti proporremo</strong> è un test di ascolto che ci aiuta a valutare la qualità delle voci generate dal nostro sistema di sintesi vocale in lingua sarda.
+</p>
+<p>
+  Ascolterai una serie di brevi clip <strong> Audio </strong> di cui potrai leggere le <strong>Trascrizioni</strong> con i quali sono stati generati. 
+<p>Dopo ogni clip, ti verrà chiesto di dare un punteggio da <strong>1 a 5</strong> su diversi aspetti della qualità vocale.<p>
+<br> Dovrai valutare <strong>20 clip audio</strong>, ognuno della durata di circa <strong> 10 secondi</strong>. <br>
+</p>
+<p>
+  <em>Il test dura circa 5-10 minuti.</em>
+</p>
+<p>
+  I tuoi dati saranno usati esclusivamente per scopi di ricerca.
+</p>
+<p><strong>Per iniziare, inserisci il tuo nome e cognome:</strong></p>
     <form id="start-form">
       <label>Nome: <input type="text" id="nome" required></label><br><br>
       <label>Cognome: <input type="text" id="cognome" required></label><br><br>
@@ -41,7 +58,7 @@
 
   <!-- Pagina del test -->
   <div id="test-page" class="hidden">
-    <p><strong>Audio <span id="audio-number">1</span>/10</strong></p>
+    <p><strong>Audio <span id="audio-number">1</span>/20</strong></p>
     <audio id="audio-player" controls></audio>
     <p><strong>Trascrizione:</strong></p>
     <p id="audio-transcription" style="white-space: pre-wrap; background: #f0f0f0; padding: 1em; border-radius: 5px;"></p>
@@ -81,10 +98,10 @@
 
   <script>
     // CONFIG: URL dello script Google Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmmCFrFwH86l1pGsiKkaho4i-y6JDi8puNAhPDDhfS4WB27l3pY4se6dODMHNtDq_A/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXpPm05aGBhy2ocunJ5oNwxaVlo3zVkvc5UDo0eVjl0iCkteHgv08ee7xj2hB29eDq/exec";
 
-    const audioFiles = [
-      'audio1.wav', 'audio2.wav', 'audio3.wav'];
+    const audioFiles = ["10_real.wav", "11_real.wav", "12_fake.wav", "13_fake.wav", "14_fake.wav", "15_fake.wav", "16_fake.wav", "17_fake.wav", "18_fake.wav", "19_real.wav", 
+	"1_fake.wav", "20_real.wav", "2_fake.wav", "3_fake.wav", "4_real.wav", "5_fake.wav", "6_real.wav", "7_fake.wav", "8_fake.wav", "9_real.wav"];
 
     let current = 0;
     const responses = [];
@@ -137,9 +154,20 @@ document.querySelectorAll('.rating-buttons').forEach(container => {
   }
 });
 
-    questionForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = new FormData(questionForm);
+questionForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  // Verifica che tutte le domande abbiano una risposta
+  const allAnswered = ['q1', 'q2', 'q3', 'q4', 'q5'].every(q => {
+    return questionForm.querySelector(`input[name="${q}"]`)?.value;
+  });
+
+  if (!allAnswered) {
+    alert("Per favore, rispondi a tutte le domande prima di procedere.");
+    return;
+  }
+
+  const data = new FormData(questionForm);
       responses.push({
         audio: audioFiles[current],
         nativeness: data.get('q1'),
