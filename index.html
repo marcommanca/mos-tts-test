@@ -29,6 +29,9 @@
   <div id="test-page" class="hidden">
     <p><strong>Audio <span id="audio-number">1</span>/10</strong></p>
     <audio id="audio-player" controls></audio>
+    <p><strong>Trascrizione:</strong></p>
+    <p id="audio-transcription" style="white-space: pre-wrap; background: #f0f0f0; padding: 1em; border-radius: 5px;"></p>
+
 
     <form id="question-form">
       <div class="question">
@@ -63,7 +66,7 @@
 
   <script>
     // CONFIG: URL dello script Google Apps Script
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6_KmmA61scKGVEvJAHLwOAzhFA_TkQ3TX-kCf96cRYfWOk-hDKr78pMSxMgtvnlFZ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmmCFrFwH86l1pGsiKkaho4i-y6JDi8puNAhPDDhfS4WB27l3pY4se6dODMHNtDq_A/exec";
 
     const audioFiles = [
       'audio1.wav', 'audio2.wav', 'audio3.wav'];
@@ -116,9 +119,23 @@
     });
 
     function loadAudio(index) {
+      const fileName = audioFiles[index]
       audioNumber.textContent = index + 1;
-      audioPlayer.src = `audio/${audioFiles[index]}`;
+      audioPlayer.src = `audio/${fileName}`;
       questionForm.reset();
+      const transcriptionPath = `text/${fileName.replace(/\.[^/.]+$/, '.txt')}`;
+      fetch(transcriptionPath)
+       .then(response => {
+         if (!response.ok) throw new Error("File non trovato");
+         return response.text();
+        })
+       .then(text => {
+          document.getElementById('audio-transcription').textContent = text;
+        })
+       .catch(error => {
+           document.getElementById('audio-transcription').textContent = '[Trascrizione non disponibile]';
+           console.error("Errore caricamento trascrizione:", error);
+        });     
     }
 
     function inviaDati() {
